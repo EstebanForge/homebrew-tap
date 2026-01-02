@@ -74,7 +74,7 @@ jobs:
             # We are running on ubuntu-latest, so GNU sed is default.
             
             # Replace URL line matching the suffix
-            sed -i "s|url ".*${suffix}.tar.gz"|url \"${download_url}\"|" "Formula/${FORMULA}.rb"
+            sed -i "s|url \".*${suffix}.tar.gz\"|url \"${download_url}\"|" "Formula/${FORMULA}.rb"
             
             # Replace the SHA256 line that follows the URL line we just replaced.
             # This is tricky with simple sed.
@@ -92,7 +92,7 @@ jobs:
           }
           
           # Update Version
-          sed -i "s/version ".*"/version \"${VERSION}\"" "Formula/${FORMULA}.rb"
+          sed -i "s/version \".*\"/version \"${VERSION}\"/" "Formula/${FORMULA}.rb"
           
           # Update Artifacts
           # macOS Universal
