@@ -1,0 +1,25 @@
+class ConstructCli < Formula
+  desc "Secure loading program (sandbox) for AI Agents"
+  homepage "https://github.com/EstebanForge/construct-cli"
+  version "0.0.1"
+  license "MIT"
+
+  if OS.mac?
+    url "https://github.com/EstebanForge/construct-cli/releases/download/v0.0.1/construct-cli-macos-universal.tar.gz"
+    sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  elsif OS.linux? && Hardware::CPU.intel?
+    url "https://github.com/EstebanForge/construct-cli/releases/download/v0.0.1/construct-cli-linux-amd64.tar.gz"
+    sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  elsif OS.linux? && Hardware::CPU.arm?
+    url "https://github.com/EstebanForge/construct-cli/releases/download/v0.0.1/construct-cli-linux-arm64.tar.gz"
+    sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  end
+
+  def install
+    bin.install "construct"
+  end
+
+  test do
+    assert_match "version", shell_output("#{bin}/construct --version")
+  end
+end

@@ -1,0 +1,191 @@
+---
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Get version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          
+          if [ -z "$VERSION" ]; then
+            echo "Error: VERSION is empty"
+            exit 1
+          fi
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test -v ./... || echo "No test files found, continuing..."
+
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: latest
+          args: --timeout=5m
+        continue-on-error: true
+
+      - name: Check config sync
+        run: make check-config
+
+      - name: Set release version
+        run: echo "${{ env.VERSION }}" > VERSION
+
+      - name: Build release binaries
+        run: |
+          make build-release
+          ls -la dist/
+
+      # ----------------------------------------------------------------
+      # NEW: Create Universal Binary for Homebrew Tap
+      # ----------------------------------------------------------------
+      - name: Create macOS Universal Binary
+        run: |
+          # Create universal binary using lipo
+          lipo -create -output dist/mcp-cli-ent dist/mcp-cli-ent-darwin-amd64 dist/mcp-cli-ent-darwin-arm64
+          
+          # Verify it is universal
+          file dist/mcp-cli-ent
+          
+          # Create the specific tarball expected by the tap
+          tar -czf dist/mcp-cli-ent-macos-universal.tar.gz -C dist mcp-cli-ent
+          
+          # Cleanup temporary binary
+          rm dist/mcp-cli-ent
+
+      # ----------------------------------------------------------------
+      # NEW: Prepare Linux Artifacts for Homebrew Tap
+      # ----------------------------------------------------------------
+      - name: Prepare Linux Artifacts
+        run: |
+          # Package Linux binaries into standardized tarballs
+          tar -czf dist/mcp-cli-ent-linux-amd64.tar.gz -C dist mcp-cli-ent-linux-amd64
+          tar -czf dist/mcp-cli-ent-linux-arm64.tar.gz -C dist mcp-cli-ent-linux-arm64
+
+      - name: Verify all binaries created
+        run: |
+          expected_binaries=(
+            "mcp-cli-ent-linux-amd64"
+            "mcp-cli-ent-linux-arm64"
+            "mcp-cli-ent-darwin-amd64"
+            "mcp-cli-ent-darwin-arm64"
+            "mcp-cli-ent-windows-amd64.exe"
+            "mcp-cli-ent-windows-arm64.exe"
+            "mcp-cli-ent-macos-universal.tar.gz"
+            "mcp-cli-ent-linux-amd64.tar.gz"
+            "mcp-cli-ent-linux-arm64.tar.gz"
+          )
+
+          missing_count=0
+          for binary in "${expected_binaries[@]}"; do
+            if [ -f "dist/$binary" ]; then
+              size=$(stat -c%s "dist/$binary")
+              echo "✅ $binary found (size: $size bytes)"
+            else
+              echo "❌ $binary missing!"
+              missing_count=$((missing_count + 1))
+            fi
+          done
+
+          if [ $missing_count -gt 0 ]; then
+            exit 1
+          fi
+
+      - name: Make binaries executable
+        run: chmod +x dist/*
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum * > checksums.txt
+
+      - name: Create Release Notes
+        run: |
+          cat > release_notes.md << 'EOF'
+          ## MCP CLI-Ent ${{ env.VERSION }} Release Notes
+
+          Quick Install: Linux/macOS/WSL
+          ```bash
+          curl -fsSL https://raw.githubusercontent.com/EstebanForge/mcp-cli-ent/main/scripts/install.sh | bash
+          ```
+
+          Quick Install: Windows PowerShell
+          ```powershell
+          iwr -useb https://raw.githubusercontent.com/EstebanForge/mcp-cli-ent/main/scripts/install.ps1 | iex
+          ```
+
+          Verification
+          ```bash
+          mcp-cli-ent --version
+          ```
+
+          ## Changes
+          EOF
+          if [ -f CHANGELOG.md ]; then
+            awk '/^## \[.*\] - / {if (found) exit; found=1} found' CHANGELOG.md | head -n -1 >> release_notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: MCP CLI-Ent ${{ env.VERSION }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          files: |
+            dist/mcp-cli-ent-linux-amd64
+            dist/mcp-cli-ent-linux-arm64
+            dist/mcp-cli-ent-darwin-amd64
+            dist/mcp-cli-ent-darwin-arm64
+            dist/mcp-cli-ent-windows-amd64.exe
+            dist/mcp-cli-ent-windows-arm64.exe
+            dist/mcp-cli-ent-macos-universal.tar.gz
+            dist/mcp-cli-ent-linux-amd64.tar.gz
+            dist/mcp-cli-ent-linux-arm64.tar.gz
+            dist/checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-tap:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Homebrew Tap Update
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.TAP_GITHUB_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'EstebanForge',
+              repo: 'homebrew-tap',
+              workflow_id: 'update-formula.yml',
+              ref: 'main',
+              inputs: {
+                formula: 'mcp-cli-ent',
+                tag: '${{ github.ref_name }}',
+                repository: '${{ github.repository }}'
+              }
+            })

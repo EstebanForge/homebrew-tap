@@ -1,0 +1,113 @@
+name: Update Formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      formula:
+        description: 'Formula name (e.g., construct-cli)'
+        required: true
+        type: string
+      tag:
+        description: 'Release tag (e.g., v1.0.1)'
+        required: true
+        type: string
+      repository:
+        description: 'Source repository (e.g., EstebanForge/construct-cli)'
+        required: true
+        type: string
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tap repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Update formula
+        run: |
+          FORMULA="${{ github.event.inputs.formula }}"
+          TAG="${{ github.event.inputs.tag }}"
+          REPO="${{ github.event.inputs.repository }}"
+          VERSION="${TAG#v}"
+          
+          echo "Updating $FORMULA to $VERSION ($TAG)..."
+          
+          # Function to process an artifact
+          update_artifact() {
+            local platform=$1
+            local suffix=$2
+            
+            echo "Processing $platform..."
+            
+            # Construct download URL
+            local filename="${FORMULA}-${suffix}.tar.gz"
+            local download_url="https://github.com/${REPO}/releases/download/${TAG}/${filename}"
+            
+            # Download
+            echo "  Downloading from $download_url"
+            curl -L -f -o "$filename" "$download_url" || { echo "  Failed to download $filename"; return 1; }
+            
+            # Calculate SHA256
+            local sha256=$(sha256sum "$filename" | awk '{print $1}')
+            echo "  SHA256: $sha256"
+            
+            # Clean up
+            rm "$filename"
+            
+            # Update Formula
+            # We use a trick with sed to match the block based on the URL pattern
+            # logic: find the line containing the specific suffix in the URL, replace the SHA line immediately following it (or on the same block)
+            # Actually, simpler: search for the specific URL pattern and replace it + the SHA.
+            
+            # Updating URL (in case it changed, though usually it's just the version part)
+            # The URL line looks like: url "https://.../vX.Y.Z/tool-suffix.tar.gz"
+            # We want to replace the WHOLE url line that matches the suffix
+            
+            # Note: macOS sed (-i '') vs GNU sed (-i)
+            # We are running on ubuntu-latest, so GNU sed is default.
+            
+            # Replace URL line matching the suffix
+            sed -i "s|url ".*${suffix}.tar.gz"|url \"${download_url}\"|" "Formula/${FORMULA}.rb"
+            
+            # Replace the SHA256 line that follows the URL line we just replaced.
+            # This is tricky with simple sed.
+            # Alternative: Read the file, identify the block, replace.
+            
+            # Let's try a robust multi-pass approach using unique markers if possible, 
+            # BUT since we didn't add comments to the ruby file, we rely on context.
+            
+            # Heuristic: 
+            # Find the line with the URL for this platform.
+            # The NEXT line is expected to be sha256 "..."
+            # We can use sed ranges or N command.
+            
+            sed -i "/${suffix}.tar.gz/!b;n;c\    sha256 \"${sha256}\"" "Formula/${FORMULA}.rb"
+          }
+          
+          # Update Version
+          sed -i "s/version ".*"/version \"${VERSION}\"" "Formula/${FORMULA}.rb"
+          
+          # Update Artifacts
+          # macOS Universal
+          update_artifact "macOS" "macos-universal"
+          
+          # Linux AMD64
+          update_artifact "Linux AMD64" "linux-amd64"
+          
+          # Linux ARM64
+          update_artifact "Linux ARM64" "linux-arm64"
+          
+          # Verify changes
+          git diff
+          
+          # Commit and push
+          git add "Formula/${FORMULA}.rb"
+          git commit -m "Update ${FORMULA} to ${TAG}"
+          git push
