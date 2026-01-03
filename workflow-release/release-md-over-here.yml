@@ -1,4 +1,3 @@
---- 
 name: Release
 
 on:
@@ -33,7 +32,7 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/}
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          
+
           if [ -z "$VERSION" ]; then
             echo "Error: VERSION is empty"
             exit 1
@@ -65,51 +64,29 @@ jobs:
           make VERSION="${VERSION}" release
           ls -la dist/
 
-      # ----------------------------------------------------------------
-      # NEW: Create Universal Binary for Homebrew Tap
-      # ----------------------------------------------------------------
       - name: Create macOS Universal Binary
         run: |
-          # Install llvm to get llvm-lipo
           sudo apt-get update && sudo apt-get install -y llvm
 
-          # Ensure llvm-lipo is available
           if ! command -v llvm-lipo &> /dev/null; then
-              # Try to find versioned llvm-lipo and symlink it
-              LIPO_PATH=$(find /usr/bin -name "llvm-lipo-*" | head -n 1)
-              if [ -n "$LIPO_PATH" ]; then
-                  sudo ln -s "$LIPO_PATH" /usr/bin/llvm-lipo
-              else
-                  echo "Error: llvm-lipo not found"
-                  exit 1
-              fi
+            LIPO_PATH=$(find /usr/bin -name "llvm-lipo-*" | head -n 1)
+            if [ -n "$LIPO_PATH" ]; then
+              sudo ln -s "$LIPO_PATH" /usr/bin/llvm-lipo
+            else
+              echo "Error: llvm-lipo not found"
+              exit 1
+            fi
           fi
 
-          # Create universal binary using llvm-lipo
-          llvm-lipo -create -output dist/construct dist/construct-darwin-amd64 dist/construct-darwin-arm64
-          
-          # Verify it is universal
-          file dist/construct
-          
-          # Create the specific tarball expected by the tap
-          tar -czf dist/construct-cli-macos-universal.tar.gz -C dist construct
-          
-          # Cleanup temporary binary
-          rm dist/construct
+          llvm-lipo -create -output dist/md-over-here dist/md-over-here-darwin-amd64 dist/md-over-here-darwin-arm64
+          file dist/md-over-here
+          tar -czf dist/md-over-here-macos-universal.tar.gz -C dist md-over-here
+          rm dist/md-over-here
 
-      # ----------------------------------------------------------------
-      # NEW: Prepare Linux Artifacts for Homebrew Tap
-      # ----------------------------------------------------------------
       - name: Prepare Linux Artifacts
         run: |
-          # Rename/Package Linux AMD64
-          # Assumes make release created dist/construct-linux-amd64 (binary) or similar
-          # The makefile seems to produce tarballs with versions. Let's look for the binary or extract it.
-          # If 'make release' produced binaries 'dist/construct-linux-amd64', we use them.
-          # Based on previous steps, it produces 'dist/construct-linux-amd64'.
-          
-          tar -czf dist/construct-cli-linux-amd64.tar.gz -C dist construct-linux-amd64
-          tar -czf dist/construct-cli-linux-arm64.tar.gz -C dist construct-linux-arm64
+          tar -czf dist/md-over-here-linux-amd64.tar.gz -C dist md-over-here-linux-amd64
+          tar -czf dist/md-over-here-linux-arm64.tar.gz -C dist md-over-here-linux-arm64
 
       - name: Verify release outputs
         env:
@@ -117,22 +94,22 @@ jobs:
         run: |
           set -e
           expected_files=(
-            "dist/construct-darwin-arm64"
-            "dist/construct-darwin-amd64"
-            "dist/construct-linux-amd64"
-            "dist/construct-linux-arm64"
-            "dist/construct-cli-macos-universal.tar.gz"
-            "dist/construct-cli-linux-amd64.tar.gz"
-            "dist/construct-cli-linux-arm64.tar.gz"
+            "dist/md-over-here-darwin-arm64"
+            "dist/md-over-here-darwin-amd64"
+            "dist/md-over-here-linux-amd64"
+            "dist/md-over-here-linux-arm64"
+            "dist/md-over-here-macos-universal.tar.gz"
+            "dist/md-over-here-linux-amd64.tar.gz"
+            "dist/md-over-here-linux-arm64.tar.gz"
             "dist/checksums.txt"
           )
 
           for file in "${expected_files[@]}"; do
             if [ -f "${file}" ]; then
               size=$(stat -c%s "${file}")
-              echo "✅ ${file} (size: ${size} bytes)"
+              echo "OK ${file} (size: ${size} bytes)"
             else
-              echo "❌ Missing expected artifact: ${file}"
+              echo "Missing expected artifact: ${file}"
               missing="yes"
             fi
           done
@@ -147,7 +124,6 @@ jobs:
         run: |
           release_date=""
           if [ -f CHANGELOG.md ]; then
-            # Use portable awk (works with mawk)
             release_date=$(awk -v ver="$VERSION" '
               $0 ~ "^## \\["ver"\\] - " {
                 sub(/^## \[[^]]+\] - /, "");
@@ -157,9 +133,9 @@ jobs:
           fi
 
           if [ -n "$release_date" ]; then
-            release_title="The Construct CLI $VERSION - $release_date"
+            release_title="md-over-here $VERSION - $release_date"
           else
-            release_title="The Construct CLI $VERSION"
+            release_title="md-over-here $VERSION"
           fi
 
           echo "RELEASE_TITLE=$release_title" >> "$GITHUB_ENV"
@@ -184,13 +160,13 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/construct-darwin-arm64-${{ env.VERSION }}.tar.gz
-            dist/construct-darwin-amd64-${{ env.VERSION }}.tar.gz
-            dist/construct-linux-amd64-${{ env.VERSION }}.tar.gz
-            dist/construct-linux-arm64-${{ env.VERSION }}.tar.gz
-            dist/construct-cli-macos-universal.tar.gz
-            dist/construct-cli-linux-amd64.tar.gz
-            dist/construct-cli-linux-arm64.tar.gz
+            dist/md-over-here-darwin-arm64-${{ env.VERSION }}.tar.gz
+            dist/md-over-here-darwin-amd64-${{ env.VERSION }}.tar.gz
+            dist/md-over-here-linux-amd64-${{ env.VERSION }}.tar.gz
+            dist/md-over-here-linux-arm64-${{ env.VERSION }}.tar.gz
+            dist/md-over-here-macos-universal.tar.gz
+            dist/md-over-here-linux-amd64.tar.gz
+            dist/md-over-here-linux-arm64.tar.gz
             dist/checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -220,7 +196,7 @@ jobs:
               workflow_id: 'update-formula.yml',
               ref: 'main',
               inputs: {
-                formula: 'construct-cli',
+                formula: 'md-over-here',
                 tag: '${{ github.ref_name }}',
                 repository: '${{ github.repository }}'
               }
