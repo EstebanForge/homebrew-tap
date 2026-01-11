@@ -16,11 +16,7 @@ class McpCliEnt < Formula
   end
 
   def install
-    if OS.mac?
-      bin.install "mcp-cli-ent"
-    else
-      bin.install "mcp-cli-ent-#{Hardware::CPU.intel? ? "linux-amd64" : "linux-arm64"}" => "mcp-cli-ent"
-    end
+    bin.install "mcp-cli-ent"
   end
 
   test do

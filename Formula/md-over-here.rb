@@ -16,11 +16,7 @@ class MdOverHere < Formula
   end
 
   def install
-    if OS.mac?
-      bin.install "md-over-here"
-    else
-      bin.install "md-over-here-#{Hardware::CPU.intel? ? "linux-amd64" : "linux-arm64"}" => "md-over-here"
-    end
+    bin.install "md-over-here"
   end
 
   test do
