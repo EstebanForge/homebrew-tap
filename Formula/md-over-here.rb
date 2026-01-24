@@ -20,6 +20,6 @@ class MdOverHere < Formula
   end
 
   test do
-    assert_match "Fetch URLs", shell_output("#{bin}/md-over-here --help")
+    assert_match "fetches web pages", shell_output("#{bin}/md-over-here --help")
   end
 end
