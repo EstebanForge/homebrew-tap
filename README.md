@@ -72,7 +72,7 @@ To add a new CLI tool to this tap and enable automated updates:
     *   In the relevant tool repository, go to `Settings > Secrets and variables > Actions`.
     *   Add a new repository secret named `TAP_GITHUB_TOKEN` with your PAT as the value.
 
-Once configured, pushing a new version tag (e.g., `v1.0.0`) to the relevant tool repository will automatically update the formula in this Homebrew tap.
+Once configured, pushing a new stable version tag (e.g., `1.0.0`) to the relevant tool repository will automatically update the formula in this Homebrew tap.
 
 ## Update / Uninstall
 
