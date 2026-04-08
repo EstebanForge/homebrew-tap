@@ -6,13 +6,13 @@ class ConstructCli < Formula
 
   if OS.mac?
     url "https://github.com/EstebanForge/construct-cli/releases/download/1.6.3/construct-cli-macos-universal.tar.gz"
-    sha256 "458ff27dadfc7d1c498c3e3cb787b9b1967e3de2bd79ceae4737b90fd472f0f6"
+    sha256 "a77444731bc367c5c3fad53dd6fd02a3b2662e55a2287b08ce6f6555cecddce7"
   elsif OS.linux? && Hardware::CPU.intel?
     url "https://github.com/EstebanForge/construct-cli/releases/download/1.6.3/construct-cli-linux-amd64.tar.gz"
-    sha256 "a5e9719033f66bbac46175b9996cb81b5bcfaaa2921dc31e6316893352f1e822"
+    sha256 "52e226c5e40332f67803a22d6ae5e4850f98105c5cac6942b0165ecb8fac94c6"
   elsif OS.linux? && Hardware::CPU.arm?
     url "https://github.com/EstebanForge/construct-cli/releases/download/1.6.3/construct-cli-linux-arm64.tar.gz"
-    sha256 "0c185935e171a10df21d153d899696e05ed253689d9bf6e5ffc86ed9df315c4a"
+    sha256 "ed3543d032b46ad02a9d59719e670db772dd58f1f19be84e81a419e1f78632ac"
   end
 
   def install
