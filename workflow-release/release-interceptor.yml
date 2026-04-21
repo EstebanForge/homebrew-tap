@@ -214,6 +214,6 @@ jobs:
               inputs: {
                 formula: 'interceptor',
                 tag: '${{ needs.release.outputs.version }}',
-                repository: '${{ github.repository }}'
+                repository: 'EstebanForge/interceptor-codex'
               }
             })
