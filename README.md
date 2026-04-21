@@ -24,6 +24,7 @@ brew install --cask EstebanForge/tap/<name>
 
 - `construct-cli` — Secure loading program (sandbox) for AI Agents
 - `mcp-cli-ent` — Context-guardian CLI for MCP servers
+- `interceptor` — Universal API translator for Codex CLI
 
 ### Casks
 

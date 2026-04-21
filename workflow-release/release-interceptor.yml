@@ -103,18 +103,18 @@ jobs:
             fi
           fi
 
-          llvm-lipo -create -output dist/codex-interceptor dist/codex-interceptor-darwin-amd64 dist/codex-interceptor-darwin-arm64
-          file dist/codex-interceptor
-          tar -czf dist/codex-interceptor-macos-universal.tar.gz -C dist codex-interceptor
-          rm dist/codex-interceptor
+          llvm-lipo -create -output dist/interceptor dist/interceptor-darwin-amd64 dist/interceptor-darwin-arm64
+          file dist/interceptor
+          tar -czf dist/interceptor-macos-universal.tar.gz -C dist interceptor
+          rm dist/interceptor
 
       - name: Prepare Linux Artifacts
         run: |
           mkdir -p dist/linux-amd64 dist/linux-arm64
-          cp dist/codex-interceptor-linux-amd64 dist/linux-amd64/codex-interceptor
-          cp dist/codex-interceptor-linux-arm64 dist/linux-arm64/codex-interceptor
-          tar -czf dist/codex-interceptor-linux-amd64.tar.gz -C dist/linux-amd64 codex-interceptor
-          tar -czf dist/codex-interceptor-linux-arm64.tar.gz -C dist/linux-arm64 codex-interceptor
+          cp dist/interceptor-linux-amd64 dist/linux-amd64/interceptor
+          cp dist/interceptor-linux-arm64 dist/linux-arm64/interceptor
+          tar -czf dist/interceptor-linux-amd64.tar.gz -C dist/linux-amd64 interceptor
+          tar -czf dist/interceptor-linux-arm64.tar.gz -C dist/linux-arm64 interceptor
           rm -rf dist/linux-amd64 dist/linux-arm64
 
       - name: Generate checksums
@@ -123,9 +123,9 @@ jobs:
         run: |
           cd dist
           sha256sum \
-            "codex-interceptor-macos-universal.tar.gz" \
-            "codex-interceptor-linux-amd64.tar.gz" \
-            "codex-interceptor-linux-arm64.tar.gz" \
+            "interceptor-macos-universal.tar.gz" \
+            "interceptor-linux-amd64.tar.gz" \
+            "interceptor-linux-arm64.tar.gz" \
             > checksums.txt
 
       - name: Verify release outputs
@@ -134,9 +134,9 @@ jobs:
         run: |
           set -e
           expected_files=(
-            "dist/codex-interceptor-macos-universal.tar.gz"
-            "dist/codex-interceptor-linux-amd64.tar.gz"
-            "dist/codex-interceptor-linux-arm64.tar.gz"
+            "dist/interceptor-macos-universal.tar.gz"
+            "dist/interceptor-linux-amd64.tar.gz"
+            "dist/interceptor-linux-arm64.tar.gz"
             "dist/checksums.txt"
           )
 
@@ -184,14 +184,14 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ env.VERSION }}
-          name: Codex Interceptor ${{ env.VERSION }}
+          name: Interceptor ${{ env.VERSION }}
           body_path: release_notes.md
           draft: false
           prerelease: ${{ steps.resolve_version.outputs.is_prerelease == 'true' }}
           files: |
-            dist/codex-interceptor-macos-universal.tar.gz
-            dist/codex-interceptor-linux-amd64.tar.gz
-            dist/codex-interceptor-linux-arm64.tar.gz
+            dist/interceptor-macos-universal.tar.gz
+            dist/interceptor-linux-amd64.tar.gz
+            dist/interceptor-linux-arm64.tar.gz
             dist/checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -212,7 +212,7 @@ jobs:
               workflow_id: 'update-formula.yml',
               ref: 'main',
               inputs: {
-                formula: 'codex-interceptor',
+                formula: 'interceptor',
                 tag: '${{ needs.release.outputs.version }}',
                 repository: '${{ github.repository }}'
               }
