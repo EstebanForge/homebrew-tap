@@ -1,4 +1,4 @@
-class Interceptor < Formula
+class InterceptorCodex < Formula
   desc "Universal API translator for Codex CLI"
   homepage "https://github.com/EstebanForge/interceptor-codex"
   version "0.1.0"
