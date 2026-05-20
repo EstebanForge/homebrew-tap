@@ -1,18 +1,18 @@
 class ConstructCli < Formula
   desc "Secure loading program (sandbox) for AI Agents"
   homepage "https://github.com/EstebanForge/construct-cli"
-  version "1.8.11"
+  version "1.8.12"
   license "MIT"
 
   if OS.mac?
-    url "https://github.com/EstebanForge/construct-cli/releases/download/1.8.11/construct-cli-macos-universal.tar.gz"
-    sha256 "7c9165c1b2f735cde0da6f5ed636dabd48ea0db2b9a1d548fbb46ad493b98bf3"
+    url "https://github.com/EstebanForge/construct-cli/releases/download/1.8.12/construct-cli-macos-universal.tar.gz"
+    sha256 "1fbde4778819eea32d618a13aeebab70cfc61d18d5513d7e3ed48993e137cc47"
   elsif OS.linux? && Hardware::CPU.intel?
-    url "https://github.com/EstebanForge/construct-cli/releases/download/1.8.11/construct-cli-linux-amd64.tar.gz"
-    sha256 "bc476a8ece2ac282d53716cb6c7ccfb9ddfe29530371d4ae04564d255498fddb"
+    url "https://github.com/EstebanForge/construct-cli/releases/download/1.8.12/construct-cli-linux-amd64.tar.gz"
+    sha256 "a071094e9506ebb610ef2050e27cfd7400deeb922a5edfc8d3cf8cb49cb8b593"
   elsif OS.linux? && Hardware::CPU.arm?
-    url "https://github.com/EstebanForge/construct-cli/releases/download/1.8.11/construct-cli-linux-arm64.tar.gz"
-    sha256 "9f59938b94136e8ff45c69200ca628f9785a6ac352e742c0f76b057a91a11d2a"
+    url "https://github.com/EstebanForge/construct-cli/releases/download/1.8.12/construct-cli-linux-arm64.tar.gz"
+    sha256 "45cee8391ed04c37576bcdd9931dc657b271b54ffbcddf45f247f8a4ae5f8702"
   end
 
   def install
