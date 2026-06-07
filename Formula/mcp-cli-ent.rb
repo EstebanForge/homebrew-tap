@@ -1,18 +1,18 @@
 class McpCliEnt < Formula
   desc "Context-guardian CLI for MCP servers"
   homepage "https://github.com/EstebanForge/mcp-cli-ent"
-  version "1.1.2"
+  version "1.2.0"
   license "MIT"
 
   if OS.mac?
-    url "https://github.com/EstebanForge/mcp-cli-ent/releases/download/1.1.2/mcp-cli-ent-macos-universal.tar.gz"
-    sha256 "b381fdc34ff06501005c77b6f6db71e47505909ec357d49c8c9c3a0bae3002b6"
+    url "https://github.com/EstebanForge/mcp-cli-ent/releases/download/1.2.0/mcp-cli-ent-macos-universal.tar.gz"
+    sha256 "923c13ad85ce6c475ee43e2aa3318ec822d2dde46df2e0904b99927dd2a1af81"
   elsif OS.linux? && Hardware::CPU.intel?
-    url "https://github.com/EstebanForge/mcp-cli-ent/releases/download/1.1.2/mcp-cli-ent-linux-amd64.tar.gz"
-    sha256 "cf4a07e4c7905c3882d54fd8ab43ed40f7aa5002e423eeb3b9670e45c164f110"
+    url "https://github.com/EstebanForge/mcp-cli-ent/releases/download/1.2.0/mcp-cli-ent-linux-amd64.tar.gz"
+    sha256 "fe548d9cfba2602e35a999e02e519d2d0b534411184ad4e3c4f189db29fdecf2"
   elsif OS.linux? && Hardware::CPU.arm?
-    url "https://github.com/EstebanForge/mcp-cli-ent/releases/download/1.1.2/mcp-cli-ent-linux-arm64.tar.gz"
-    sha256 "e2bd1f0d5d241866b6eca49fea9775c13338f036d0421d1eff445bb35be6baef"
+    url "https://github.com/EstebanForge/mcp-cli-ent/releases/download/1.2.0/mcp-cli-ent-linux-arm64.tar.gz"
+    sha256 "3a81ae158c3bc7fa1a828df8ba860ce42f3cf8c9d98ed821864989956c95b24d"
   end
 
   def install
