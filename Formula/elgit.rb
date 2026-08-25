@@ -2,6 +2,7 @@ class Elgit < Formula
   desc "Git for humans, safely: sw, sync, publish, unpublish, undo, branches"
   homepage "https://github.com/EstebanForge/elgit"
   version "0.1.0"
+  license "MIT"
 
   # sha256 placeholders: the update-formula workflow rewrites url and sha256
   # on the release dispatch. Do not install before that runs.
