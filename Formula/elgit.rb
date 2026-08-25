@@ -8,13 +8,13 @@ class Elgit < Formula
   # on the release dispatch. Do not install before that runs.
   if OS.mac?
     url "https://github.com/EstebanForge/elgit/releases/download/0.1.0/elgit-macos-universal.tar.gz"
-    sha256 "f6d2ca63ae8d800dc4d75fe14f0397161e085b96b54d10d9ae367bdb2145aee4"
+    sha256 "dffea59bd3adc8be14cae28c21a2499d9e6a78e0b57e988f76f9afb2c4f47520"
   elsif OS.linux? && Hardware::CPU.intel?
     url "https://github.com/EstebanForge/elgit/releases/download/0.1.0/elgit-linux-amd64.tar.gz"
-    sha256 "9c2d68dcc981c37b93689c09cb6f397a6aab604503316271c5ffc974877ec1f1"
+    sha256 "1caef43798ab936f3f562a581a9627c4b3b949ad06756beb7baf2653c5a3c181"
   elsif OS.linux? && Hardware::CPU.arm?
     url "https://github.com/EstebanForge/elgit/releases/download/0.1.0/elgit-linux-arm64.tar.gz"
-    sha256 "9f8aa194e7090c4bd0f543213db0c71165da998f24394a0443282ca032953f84"
+    sha256 "7793a36ed0784f7a0932a7fbbe0ff2b409eae4706d7f586915123bbf09424bc6"
   end
 
   depends_on "git" => [:recommended, "2.24"]
