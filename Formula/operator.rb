@@ -4,6 +4,7 @@ class Operator < Formula
   version "0.1.1"
   license "MIT"
 
+  if OS.mac?
     url "https://github.com/EstebanForge/operator/releases/download/0.1.1/operator-macos-universal.tar.gz"
     sha256 "3223f1ecd8ccdccbaf4af7b608a0e9eeb7946ede7b44f28b8ae77046f6b15d27"
   elsif OS.linux? && Hardware::CPU.intel?
