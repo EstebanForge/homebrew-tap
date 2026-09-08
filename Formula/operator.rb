@@ -1,18 +1,18 @@
 class Operator < Formula
   desc "Zero-cruft tmux session multiplexer: guided TUI for humans, JSON for agents"
   homepage "https://github.com/EstebanForge/operator"
-  version "0.1.1"
+  version "0.2.0"
   license "MIT"
 
   if OS.mac?
-    url "https://github.com/EstebanForge/operator/releases/download/0.1.1/operator-macos-universal.tar.gz"
-    sha256 "3223f1ecd8ccdccbaf4af7b608a0e9eeb7946ede7b44f28b8ae77046f6b15d27"
+    url "https://github.com/EstebanForge/operator/releases/download/0.2.0/operator-macos-universal.tar.gz"
+    sha256 "a1983c8f3e59da5fc07e6b227ac209bd926eeb2703be283e185d58e1833438f7"
   elsif OS.linux? && Hardware::CPU.intel?
-    url "https://github.com/EstebanForge/operator/releases/download/0.1.1/operator-linux-amd64.tar.gz"
-    sha256 "2687332e9254bf0b2f4907aa0fb8151458d2b4d4a362caf2e3af1cc672031c16"
+    url "https://github.com/EstebanForge/operator/releases/download/0.2.0/operator-linux-amd64.tar.gz"
+    sha256 "7eab92c9b55705d1dc1dbdee437caf3e1c47e7388588efa65e906fa78b08ef52"
   elsif OS.linux? && Hardware::CPU.arm?
-    url "https://github.com/EstebanForge/operator/releases/download/0.1.1/operator-linux-arm64.tar.gz"
-    sha256 "c5209526cd047332dfd80b4e5e7229ff045be8b6e5f2912913cbf4a44fe0908e"
+    url "https://github.com/EstebanForge/operator/releases/download/0.2.0/operator-linux-arm64.tar.gz"
+    sha256 "7b7a95edefe7dce3e4da3e6b0951e928291b6334c2f0f4d721e71f227fb98add"
   end
 
   depends_on "tmux"
