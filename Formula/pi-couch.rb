@@ -1,21 +1,21 @@
 class PiCouch < Formula
   desc "Phone client for the pi coding agents running on your server"
   homepage "https://github.com/EstebanForge/pi-couch"
-  version "20261031"
+  version "20261101"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/EstebanForge/pi-couch/releases/download/20261031/pi-couch-darwin-arm64"
-    sha256 "24542f9b0d9198681b2852605823dafa946d9a0dcab632f6f8521546d5ab9024"
+    url "https://github.com/EstebanForge/pi-couch/releases/download/20261101/pi-couch-darwin-arm64"
+    sha256 "d3e7a540068617a04bbb55b68aecd1a15eb95d2d7c729a84ec3499baf1158f0c"
   elsif OS.mac?
-    url "https://github.com/EstebanForge/pi-couch/releases/download/20261031/pi-couch-darwin-amd64"
-    sha256 "971842a271ceee528bbd5f5c9e77b48982fa3f0c77b2ff9add93e6dff7aad35b"
+    url "https://github.com/EstebanForge/pi-couch/releases/download/20261101/pi-couch-darwin-amd64"
+    sha256 "2b1e64c54b70aa99f2b2bc49c35afe579bfbfc3165d7036ede774e6a964d62f6"
   elsif OS.linux? && Hardware::CPU.intel?
-    url "https://github.com/EstebanForge/pi-couch/releases/download/20261031/pi-couch-linux-amd64"
-    sha256 "560c006f6be65ed59efc1aadd1ab19d1ec656e850c3cb824fb5217db1d835a6f"
+    url "https://github.com/EstebanForge/pi-couch/releases/download/20261101/pi-couch-linux-amd64"
+    sha256 "9527b6b9e2d73c1a812d72c47e8196ca9790b1a812ec7ffc4eebd67808fbb0e4"
   elsif OS.linux? && Hardware::CPU.arm?
-    url "https://github.com/EstebanForge/pi-couch/releases/download/20261031/pi-couch-linux-arm64"
-    sha256 "ca12b54382b703094eeb4d27aee0cd0e6395591dd0f9d67b236b71b4ad5104eb"
+    url "https://github.com/EstebanForge/pi-couch/releases/download/20261101/pi-couch-linux-arm64"
+    sha256 "5cf38127d398bcf78b5c856c8f3327f9a4bc6ea00135306ca68a20d418bb3747"
   end
 
   # Bare single-binary release assets; the bot hashes the downloaded
