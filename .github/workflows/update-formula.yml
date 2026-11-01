@@ -82,7 +82,8 @@ jobs:
             curl -L -f -o "$filename" "$download_url" || { echo "  Failed to download $filename"; return 1; }
             
             # Calculate SHA256
-            local sha256=$(sha256sum "$filename" | awk '{print $1}')
+            local sha256
+            sha256=$(sha256sum "$filename" | awk '{print $1}')
             echo "  SHA256: $sha256"
             
             # Clean up
