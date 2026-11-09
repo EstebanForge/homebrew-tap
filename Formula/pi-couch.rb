@@ -6,16 +6,16 @@ class PiCouch < Formula
 
   if OS.mac? && Hardware::CPU.arm?
     url "https://github.com/EstebanForge/pi-couch/releases/download/20261109/pi-couch-darwin-arm64"
-    sha256 "1e4ecf9655f4ade070933aba6f3e23c0bf2a57d9105c354f305268f7b5e5b239"
+    sha256 "edca29dba14e827c8555628c315271ee58f12ac7cec82835ee07bac0e4bca8b5"
   elsif OS.mac?
     url "https://github.com/EstebanForge/pi-couch/releases/download/20261109/pi-couch-darwin-amd64"
-    sha256 "e9a006f8249a4617fe5359a950402bc334ec605e199a1e505ea8cc1cd864c319"
+    sha256 "5e40fed9dd8fba33d004689b254aa7f98b394e2447d45c61b6107f2037cd6532"
   elsif OS.linux? && Hardware::CPU.intel?
     url "https://github.com/EstebanForge/pi-couch/releases/download/20261109/pi-couch-linux-amd64"
-    sha256 "36623350a9f1dfddea1285f5ffa1be94d3e4e18dd5c9aaf12402d84ff72e42e1"
+    sha256 "2de6c669f44e7cd3a96e6e8a06c5535f285fee2c7a4be5b05cb653f3ba3b7536"
   elsif OS.linux? && Hardware::CPU.arm?
     url "https://github.com/EstebanForge/pi-couch/releases/download/20261109/pi-couch-linux-arm64"
-    sha256 "7af52fb134c77dfeba6d582f91361efe4aef0f5a7b2bbc1ea2c41b2665ad2a25"
+    sha256 "19adb938aa1265ff114ee03204ed3e4370eb7d1801a313612c2c93462963085e"
   end
 
   # Bare single-binary release assets; the bot hashes the downloaded
